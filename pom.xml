@@ -1,0 +1,153 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>gds</groupId>
+	<artifactId>gds-modelwithoutcas</artifactId>
+	<packaging>war</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>gds-modelwithoutcas Maven Webapp</name>
+	<url>http://maven.apache.org</url>
+	<properties>
+		<spring.version>4.3.9.RELEASE</spring.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<dependencies>
+		<!-- 单元测试使用的jar -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- spring单元测试 -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- 样式服务引入jar -->
+		<dependency>
+			<groupId>net.sf.json-lib</groupId>
+			<artifactId>json-lib</artifactId>
+			<version>2.3</version>
+			<classifier>jdk15</classifier>
+		</dependency>
+		<!-- 基础框架核心 -->
+		<dependency>
+			<groupId>gds</groupId>
+			<artifactId>gds-core</artifactId>
+			<version>2.1.1-beta-7</version>
+		</dependency>
+		<!-- 数据库链接及mybatis集成 -->
+		<dependency>
+			<groupId>gds</groupId>
+			<artifactId>gds-dbpool</artifactId>
+			<version>1.1.1-beta-3</version>
+		</dependency>
+		<!-- 基础数据 -->
+		<dependency>
+			<groupId>gds</groupId>
+			<artifactId>gds-basedata</artifactId>
+			<version>1.1.1-beta-1</version>
+		</dependency>
+		<!-- 报表制作
+		<dependency>
+			<groupId>gds</groupId>
+			<artifactId>gds-aspose</artifactId>
+			<version>1.1.1-beta-3</version>
+		</dependency> -->
+		<!-- 工具类框架 -->
+		<dependency>
+			<groupId>gds</groupId>
+			<artifactId>gds-utils</artifactId>
+			<version>1.1.1-beta-3</version>
+		</dependency>
+		<!-- 附件上传 
+		<dependency>
+			<groupId>gds</groupId>
+			<artifactId>gds-upload</artifactId>
+			<version>1.1.1-beta-4</version>
+		</dependency>-->
+		<!-- displaytag 
+		<dependency>
+			<groupId>gds</groupId>
+			<artifactId>gds-displaytag</artifactId>
+			<version>1.1.1-beta-2</version>
+			<type>pom</type>
+		</dependency>-->
+		<!-- ZTree树结构 
+		<dependency>
+			<groupId>gds</groupId>
+			<artifactId>gds-ztree</artifactId>
+			<version>1.1.1-beta-3</version>
+		</dependency>-->
+		<!-- 工作流
+		<dependency>
+			<groupId>gds</groupId>
+			<artifactId>gds-workflow</artifactId>
+			<version>1.1.1-beta-2</version>
+		</dependency> -->
+		<!-- rediscache缓存 -->
+		<dependency>
+			<groupId>gds</groupId>
+			<artifactId>gds-ehcache</artifactId>
+			<version>1.1.1-beta-2</version>
+		</dependency>
+		<!-- 码表及系统参数 -->
+		<dependency>
+			<groupId>gds</groupId>
+			<artifactId>gds-code</artifactId>
+			<version>1.1.1-beta-2</version>
+			<classifier>ehcache</classifier>
+		</dependency>
+		<!-- 日志记录 -->
+		<dependency>
+			<groupId>gds</groupId>
+			<artifactId>gds-log</artifactId>
+			<version>1.1.1-beta-2</version>
+		</dependency>
+		
+		<!-- XML数据流解析 -->
+		<dependency>
+			<groupId>org.dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+			<version>2.1.0</version>
+		</dependency>
+		
+		<!-- postgresql 数据库驱动 -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>9.3-1102-jdbc41</version>
+		</dependency>
+		
+	    <!-- Setter、Getter包 -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.16.18</version>
+			<scope>provided</scope>
+		</dependency>
+		
+	
+		
+	</dependencies>
+	<build>
+		<finalName>/</finalName>
+		<plugins>
+			<!-- 指定JDK的编译版本 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+					<showWarnings>true</showWarnings>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

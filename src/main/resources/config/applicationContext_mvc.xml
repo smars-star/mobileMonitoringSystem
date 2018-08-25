@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/mvc
+	http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/aop 
+    http://www.springframework.org/schema/aop/spring-aop.xsd">
+	<!-- 该标签作用是扫描注解类的包 ,扫包只在springmvc的配置文件中设置，在其他spring文件不设置扫包的操作。 扫描的bean注解包括：@Controller、@Respository、@Service、@Component -->
+	<context:component-scan base-package="gds.*"
+		use-default-filters="false">
+		<context:include-filter type="annotation"
+			expression="org.springframework.stereotype.Controller" />
+		<context:include-filter type="annotation"
+			expression="org.springframework.web.bind.annotation.ControllerAdvice" />
+	</context:component-scan>
+
+	<aop:aspectj-autoproxy proxy-target-class="true" />
+	<!-- 配置数据源, 整合其他框架, 事务等. -->
+	<!-- 设置读取资源文件 -->
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:dbconfig.properties</value>
+				<value>classpath:appSetting.properties</value>
+				<value>classpath:gds/framework/exceptionhandler/sqlExceptionMessage.properties</value>
+			</list>
+		</property>
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+	</bean>
+
+	<!-- 加载properties文件配置信息 -->
+	<bean scope="singleton" id="propertyUtils" class="gds.framework.utils.PropertyUtils">
+		<property name="locations">
+			<list>
+				<value>classpath:dbconfig.properties</value>
+				<value>classpath:appSetting.properties</value>
+				<value>classpath:gds/framework/exceptionhandler/sqlExceptionMessage.properties</value>
+			</list>
+		</property>
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+	</bean>
+
+	<!-- 配置视图解析器，下面是针对jsp作为视图的配置，也可以设置jstlView、Velocity等作为视图展示 -->
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/"></property>
+		<property name="suffix" value=".jsp"></property>
+	</bean>
+
+	<!-- default-servlet-handler 将在 SpringMVC 上下文中定义一个 DefaultServletHttpRequestHandler, 
+		它会对进入 DispatcherServlet 的请求进行筛查, 如果发现是没有经过映射的请求, 就将该请求交由 WEB 应用服务器默认的 Servlet 
+		处理. 如果不是静态资源的请求，才由 DispatcherServlet 继续处理 一般 WEB 应用服务器默认的 Servlet 的名称都是 default. 
+		若所使用的 WEB 服务器的默认 Servlet 名称不是 default，则需要通过 default-servlet-name 属性显式指定 -->
+	<mvc:default-servlet-handler />
+
+	<!-- 不通过controller，直接地跳转到目标页面。如：跳转成功页面、错误页面等 -->
+	<mvc:view-controller path="/success" view-name="/infoPage/successful" />
+	<mvc:view-controller path="/bussinessError"
+		view-name="/errorPage/bussinessError" />
+	<mvc:view-controller path="/systemError" view-name="/errorPage/systemError" />
+	<mvc:view-controller path="/databaseError"
+		view-name="/errorPage/databaseError" />
+	<mvc:view-controller path="/noPermission"
+		view-name="/errorPage/noPermission" />
+	<mvc:view-controller path="/repeatSubmitError"
+		view-name="/errorPage/repeatSubmitError" />
+	<!-- 注册三个bean：RequestMappingHandlerMapping、RequestMappingHandlerAdapter、ExceptionHandlerExceptionResolver 
+		前两个bean是处理@requestMapping注解的，第三个处理异常解析的（@ExceptionHandler）； 并提供以下支持： – 支持使用 
+		ConversionService 实例对表单参数进行类型转换 – 支持使用 @NumberFormat annotation、@DateTimeFormat 
+		注解完成数据类型的格式化 – 支持使用 @Valid 注解对 JavaBean 实例进行 JSR 303 验证 – 支持使用 @RequestBody 
+		和 @ResponseBody 注解 -->
+	<mvc:annotation-driven></mvc:annotation-driven>
+
+</beans>

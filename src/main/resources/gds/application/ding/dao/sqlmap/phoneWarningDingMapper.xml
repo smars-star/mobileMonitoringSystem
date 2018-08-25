@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="phoneWarningDing">
+   
+      
+  <!-- 添加钉钉人员DTO   -->
+   <insert id="addDingEmployeeDTO"  parameterType="gds.application.ding.phoneWarningDing.dto.DingEmployeeDTO">
+   	with upsert as 
+(
+update fw_dinguser 
+ set  mobile = #{mobile} ,
+	   tel = #{tel},
+	   workPlace = #{workPlace},
+	   remark = #{remark},
+	   isAdmin = #{isAdmin},
+	   isBoss = #{isBoss} ,
+	   isHide = #{isHide} ,
+	   active = #{active},
+	   department = #{department},
+	   position= #{position},
+	   email = #{email} ,
+	   orgEmail =#{orgEmail},
+	   avatar = #{avatar} ,
+	   jobnumber = #{jobnumber} ,
+	   hiredDate = #{hiredDate} ,
+	   lastModifyTime =  current_timestamp
+ where userid=#{userid} returning 
+ *)
+insert into fw_dinguser 
+      (
+			userid,unionid,mobile,tel,workPlace,remark,isAdmin,isBoss,isLeader,isHide,
+			active,department,position,email,orgEmail,avatar,jobnumber,hiredDate,
+			createTime,createPersonID,lastModifyTime,lastModifyPersonID 
+		)
+select
+			#{userid} , #{unionid} , #{mobile} , #{tel} ,#{workPlace} ,#{remark} ,#{isAdmin} ,#{isBoss} ,#{isLeader} ,#{isHide},
+			#{active} , 	#{department} , #{position}  ,#{email} , #{orgEmail} ,#{avatar} ,#{jobnumber} ,#{hiredDate} ,
+		   current_timestamp, 'admin',  current_timestamp, 'admin'
+where not exists (select 1 from upsert where userid = #{userid});
+   </insert>
+
+   
+</mapper> 

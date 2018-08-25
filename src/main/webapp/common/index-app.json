@@ -1,0 +1,136 @@
+[
+  {
+    "title": "教学计划",
+    "id": "jxjh",
+    "icon": "jxjh",
+    "link": [
+      {
+        "title": "教学任务",
+        "id": "jxrw",
+        "icon": "task",
+        "link": "/demo/list1.jsp"
+      },
+      {
+        "title": "排课",
+        "id": "pk",
+        "icon": "calender2",
+        "link": "/demo/list3.jsp"
+      },
+      {
+        "title": "选课",
+        "id": "xk",
+        "icon": "select",
+        "link": "/demo/list3.jsp"
+      },
+      {
+        "title": "课表",
+        "id": "kb",
+        "icon": "list",
+        "link": "/demo/list3.jsp"
+      },
+      {
+        "title": "教材管理",
+        "id": "jcgl",
+        "icon": "document",
+        "link": "/demo/list3.jsp"
+      },
+      {
+        "title": "教学场地场所",
+        "id": "jxcd",
+        "icon": "tune-up",
+        "link": "/demo/list3.jsp"
+      },
+      {
+        "title": "学期及校历",
+        "id": "xqxl",
+        "icon": "calender1",
+        "link": "/demo/list3.jsp"
+      },
+      {
+        "title": "人才培养方案",
+        "id": "pyfa",
+        "icon": "acess",
+        "link": "/demo/list3.jsp"
+      },
+      {
+        "title": "承训专业",
+        "id": "cxzy",
+        "icon": "document2",
+        "link": "/demo/list3.jsp"
+      },
+      {
+        "title": "专业班次",
+        "id": "zybc",
+        "icon": "list",
+        "link": "/demo/list3.jsp"
+      }
+    ]
+  },
+  {
+    "title": "办公辅助",
+    "id": "jygl",
+    "icon": "jygl",
+    "link": "/demo/list1.jsp"
+  },
+  {
+    "title": "公文处理",
+    "id": "xygl",
+    "icon": "xygl",
+    "link": "/demo/list2.jsp"
+  },
+  {
+    "title": "考务成绩",
+    "id": "kwcj",
+    "icon": "kwcj",
+    "link": [
+      {
+        "title": "补考管理",
+        "id": "jxrw",
+        "icon": "task",
+        "link": "/demo/list3.jsp"
+      },
+      {
+        "title": "缓考管理",
+        "id": "pk",
+        "icon": "calender2",
+        "link": "/demo/list3.jsp"
+      },
+      {
+        "title": "清考管理",
+        "id": "xk",
+        "icon": "select",
+        "link": "/demo/list3.jsp"
+      },
+      {
+        "title": "排考管理",
+        "id": "kb",
+        "icon": "list",
+        "link": "/demo/list3.jsp"
+      },
+      {
+        "title": "考试安排",
+        "id": "jcgl",
+        "icon": "document",
+        "link": "/demo/list3.jsp"
+      },
+      {
+        "title": "成绩管理",
+        "id": "jxcd",
+        "icon": "tune-up",
+        "link": "/demo/list3.jsp"
+      }
+    ]
+  },
+  {
+    "title": "综合素质",
+    "id": "zhsz",
+    "icon": "zhsz",
+    "link": "/demo/list2.jsp"
+  },
+  {
+    "title": "设备管理",
+    "id": "xygl",
+    "icon": "xtgl",
+    "link": "/demo/list2.jsp"
+  }
+]

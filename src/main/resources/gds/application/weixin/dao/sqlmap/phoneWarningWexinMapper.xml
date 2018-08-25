@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="phoneWarningWexin">
+	
+   
+   <!--  查询告警DTO  -->
+   <select id="getPhoneWarningDTO" parameterType="String"  resultType="gds.application.weixin.phoneWarningWeixin.dto.PhoneEarlyWarningDTO">
+	SELECT  A.WARNINGID,a.warningtype , B.CODELABEL WARNINGTYPENAME,
+	              a.warningstatus, C.CODELABEL warningStatusName,
+	              TO_CHAR(a.warningtime,'YYYY-MM-DD HH24:MI') warningtime, a.dealwithtime,
+	              a.sensorno, a.longitude, a.latitude, a.warningaddress
+	FROM    early_warning A , fw_codelist B, fw_codelist C
+	WHERE  A.warningtype = B.CODEVALUE AND B.CODETYPE='GJLXM'
+	              AND A.warningstatus = C.CODEVALUE and c.codetype='GJZTM'
+	              AND cast(A.WARNINGID as TEXT) = #{warningID}
+   </select>
+      
+  <!-- 添加微信公众号人员粉丝DTO   -->
+   <insert id="addWeixinPublicEmployeeDTO"  parameterType="gds.application.weixin.phoneWarningWeixin.dto.WeixinPublicEmployeeDTO">
+   	with upsert as 
+		(
+		update fw_weixinuser 
+		 set  subscribe = #{subscribe} ,
+			   subscribe_time = #{subscribe_time},
+			   nickname = #{nickname},
+			   sex = #{sex},
+			   remark = #{remark},
+			   groupid = #{groupid} ,
+			   tagidList = #{tagidList},
+			   headimgurl = #{headimgurl},
+			   language= #{language},
+			   country = #{country} ,
+			   province =#{province},
+			   city = #{city} ,
+			   lastModifyTime =  current_timestamp
+		 where openid=#{openid} returning  *
+		)
+		insert into fw_weixinuser 
+		      (
+					openid, subscribe, subscribe_time, nickname,
+					sex, remark, groupid, tagidList, headimgurl,
+					language, country, province, city,
+					CREATEPERSONID, CREATETIME, LASTMODIFYPERSONID, LASTMODIFYTIME
+				)
+		select
+					#{openid} , #{subscribe} , #{subscribe_time} , #{nickname} ,
+					#{sex} , 	#{remark} , #{groupid}  ,#{tagidList} , #{headimgurl} ,
+					#{language} , #{country} , #{province} , #{city} ,
+				    'admin', current_timestamp, 'admin', current_timestamp
+		where not exists (select 1 from upsert where openid = #{openid});
+   </insert>
+   
+   <!-- 查询微信公众号关注人员集合  -->
+   <select id="findWeixinPublicEmployeeList" parameterType="String"  resultType="gds.application.weixin.phoneWarningWeixin.dto.WeixinPublicEmployeeDTO">
+   	  select  openid,subscribe,subscribe_time,nickname,sex,remark,groupid,tagidList,headimgurl,language,country,province,city 
+   	  from    fw_weixinuser
+   	  where  subscribe != '0'  and   cast(groupid as TEXT)  = #{pubic_weixin_phoneWarnGroupid}
+   </select>
+   
+   
+   <!--  查询当前传感器的站点负责人公众号openID  -->
+   <select id="findSiteManagerList" parameterType="String" resultType="gds.application.weixin.phoneWarningWeixin.dto.SensorSiteMangeEmpDTO" >
+      SELECT    distinct siteleader, sensorno, wechatno, realName
+      FROM     base_siteinfo,  base_sensor, rbac_user
+      WHERE   base_siteinfo.siteid = base_sensor.siteid
+	                 and position ( ',' || rbac_user.userid || ',' in ',' || base_siteinfo.siteleader || ','  ) > 0
+	                 and  cast(sensorno as TEXT)  =  #{sensorNo}
+   </select>
+   
+   <!--  查询传感器摄像头部门负责人的公众号openID  -->
+   <select id="findSiteDepMangerList" parameterType="String" resultType="gds.application.weixin.phoneWarningWeixin.dto.SensorSiteMangeEmpDTO" >
+     with recursive R as (
+			select    DEPARTMENTID, PARENTID, PRINCIPALID
+			from    BASE_DEPARTMENT
+		    union all 
+		    SELECT   BASE_DEPARTMENT.DEPARTMENTID, BASE_DEPARTMENT.PARENTID, BASE_DEPARTMENT.PRINCIPALID
+			FROM    BASE_DEPARTMENT, R
+			WHERE 	BASE_DEPARTMENT.PARENTID = R.DEPARTMENTID
+     ) SELECT   distinct  sensorNo , wechatNo, realName
+       FROM     R, BASE_SENSOR, rbac_user
+       WHERE  R.DEPARTMENTID = BASE_SENSOR.DEPARTMENTID
+	                 and r.PRINCIPALID  = rbac_user.userid
+		              and  cast(sensorNo as TEXT)  =   #{sensorNo}
+   </select>
+   
+   <!--  查询手机预警明细集合信息  -->
+   <select id="findPhoneEarlyWarningRefList" parameterType="String" resultType="gds.application.weixin.phoneWarningWeixin.dto.PhoneEarlyWarningRefDTO">
+      	SELECT WARNINGREFID, IMAGEPATH, objectType, objectPostion
+		FROM
+		(
+			SELECT WARNINGREFID, IMAGEPATH, OBJECTTYPE, CAST(OBJECTPOSTION AS VARCHAR)objectPostion,
+			RANK () OVER (PARTITION BY WARNINGID, IMAGEPATH ORDER BY IMAGEPATH DESC ) IMAGENUM
+			FROM
+				EARLY_WARNINGREF
+			WHERE
+				WARNINGID = #{warningID}
+		) A
+		WHERE    IMAGENUM  <![CDATA[ <=  ]]>10
+		ORDER BY IMAGEPATH
+   </select>
+   
+   
+</mapper> 

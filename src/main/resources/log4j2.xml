@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- monitorInterval指log4j2每隔1800秒，自动监控该配置文件是否有变化，如果变化，则自动根据文件内容重新配置 -->
+<!-- status用于设置log4j2自身内部的信息输出，可以不设置，当设置成trace时，你会看到log4j2内部各种详细输出 -->
+<configuration monitorInterval="5"> 
+	<!--先定义所有的appender -->
+	<appenders>
+		<!--这个输出控制台的配置 -->
+		<Console name="console" target="SYSTEM_OUT">
+			<!--这个都知道是输出日志的格式 -->
+			<PatternLayout
+				pattern="%d{yyyy-MM-dd HH:mm:ss} %-5level %class{36} %L %M - %msg%xEx%n" />
+		</Console>
+		<!--文件会打印出所有信息，这个log每次运行程序会自动清空，由append属性决定，这个也挺有用的，适合临时测试用 -->
+		<!-- <File name="log" fileName="${sys:catalina.home}/logs/${date:yyyy-MM-dd}.log" 
+			append="false"> <ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY" 
+			/> <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n" 
+			/> </File> -->
+		<!--这个会打印出所有的信息，每次大小超过size，则这size大小的日志会自动存入按年份-月份建立的文件夹下面并进行压缩，作为存档 -->
+		<RollingRandomAccessFile name="RollingFile"
+			fileName="${sys:catalina.home}/logs/catalina.log" filePattern="${sys:catalina.home}/logs/catalina-%d{yyyy-MM-dd}.log">
+			<PatternLayout
+				pattern="%d{yyyy-MM-dd HH:mm:ss} %-5level %class{36} %L %M - %msg%xEx%n" />
+			<!-- 一天生成一个日志文件 -->
+			<TimeBasedTriggeringPolicy modulate="true" interval="1" />
+		</RollingRandomAccessFile>
+	</appenders>
+	<!--然后定义logger，只有定义了logger并引入的appender，appender才会生效 -->
+	<loggers>
+		<logger name="org.springframework" level="INFO"/>
+		<logger name="org.mybatis" level="INFO"/>
+		<!--建立一个默认的root的logger -->
+		<root level="INFO">
+			<appender-ref ref="console" />
+			<appender-ref ref="RollingFile" />
+		</root>
+	</loggers>
+</configuration>

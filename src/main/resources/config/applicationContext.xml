@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx.xsd">
+	<!-- 该标签作用是扫描注解类的包 ,扫包只在springmvc的配置文件中设置，在其他spring文件不设置扫包的操作。 扫描的bean注解包括：@Controller、@Respository、@Service、@Component -->
+	<context:component-scan base-package="gds.*">
+		<context:exclude-filter type="annotation"
+			expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+
+	<!-- 配置数据源, 整合其他框架, 事务等. -->
+	<!-- 设置读取资源文件 -->
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:dbconfig.properties</value>
+				<value>classpath:appSetting.properties</value>
+				<value>classpath:gds/framework/exceptionhandler/sqlExceptionMessage.properties</value>
+			</list>
+		</property>
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+	</bean>
+
+	<!-- 加载properties文件配置信息 -->
+	<bean scope="singleton" id="propertyUtils" class="gds.framework.utils.PropertyUtils">
+		<property name="locations">
+			<list>
+				<value>classpath:dbconfig.properties</value>
+				<value>classpath:appSetting.properties</value>
+				<value>classpath:gds/framework/exceptionhandler/sqlExceptionMessage.properties</value>
+			</list>
+		</property>
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+	</bean>
+
+	<!-- 设置事务管理 -->
+	<bean name="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	<!-- 声明自动为spring容器中那些配置@aspectJ切面的bean创建代理， 织入切面 proxy-target-class属性，默认为false，表示使用jdk动态代理织入增强， 
+		当配为<aop:aspectj-autoproxy poxy-target-class="true"/>时， 表示使用CGLib动态代理技术织入增强。不过即使proxy-target-class设置为false， 
+		如果目标类没有声明接口，则spring将自动使用CGLib动态代理。 -->
+	<!-- 声明事务通知（增强），并设置哪些方法需要添加事务 -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<!-- name:拦截的方法名，支持通配符 propagation：事务的传播行为，默认值：REQUIRED read-only：事务是否只读 
+				,默认值：false rollback-for：哪些异常触发事务的回滚操作 no-rollback-for:哪些异常不触发事务的回滚操作 isolation：隔离级别 
+				，默认值：DEFAULT,使用数据库的隔离级别 -->
+			<tx:method name="delete*" propagation="REQUIRED" read-only="false"
+				rollback-for="java.lang.Exception" />
+			<tx:method name="insert*" propagation="REQUIRED" read-only="false"
+				rollback-for="java.lang.Exception" />
+			<tx:method name="update*" propagation="REQUIRED" read-only="false"
+				rollback-for="java.lang.Exception" />
+			<tx:method name="save*" propagation="REQUIRED" read-only="false"
+				rollback-for="java.lang.Exception" />
+			<tx:method name="add*" propagation="REQUIRED" read-only="false"
+				rollback-for="java.lang.Exception" />
+			<tx:method name="modify*" propagation="REQUIRED" read-only="false"
+				rollback-for="java.lang.Exception" />
+			<tx:method name="batch*" propagation="REQUIRED" read-only="false"
+				rollback-for="java.lang.Exception" />
+
+			<tx:method name="set*" propagation="REQUIRED" read-only="false"
+				rollback-for="java.lang.Exception" />
+
+			<tx:method name="submit*" propagation="REQUIRED" read-only="false"
+				rollback-for="java.lang.Exception" />
+
+			<tx:method name="audit*" propagation="REQUIRED" read-only="false"
+				rollback-for="java.lang.Exception" />
+
+			<tx:method name="sendback*" propagation="REQUIRED"
+				read-only="false" rollback-for="java.lang.Exception" />
+
+			<tx:method name="undo*" propagation="REQUIRED" read-only="false"
+				rollback-for="java.lang.Exception" />
+		</tx:attributes>
+	</tx:advice>
+
+	<!-- 事务处理 ，配置切面 -->
+	<aop:config>
+		<!-- 配置切入点，设置哪些类使用使用到事务 -->
+		<!-- ?代表可选 表达式简单说明：注解? 修饰符? 返回值类型 类型声明?方法名(参数列表) 异常列表? *：匹配任何数量字符； ..：匹配任何数量字符的重复，如在类型模式中匹配任何数量子包；而在方法参数模式中匹配任何数量参数。 
+			+：匹配指定类型的子类型；仅能作为后缀放在类型模式后边。 常用的切点指示符： execution：用于匹配方法执行的连接点 args：用于匹配当前执行的方法传入的参数为指定类型的执行方法 
+			@annotatin：用于匹配当前执行方法持有指定注解的方法 @args： 用于匹配当前执行的方法传入的参数持有指定注解的执行 其他的还有with、this、target、@with、@target -->
+		<aop:pointcut id="pc" expression="execution(* *..service..*(..))" />
+		<aop:advisor pointcut-ref="pc" advice-ref="txAdvice" />
+	</aop:config>
+	<bean
+		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<bean
+					class="org.springframework.http.converter.StringHttpMessageConverter">
+					<property name="supportedMediaTypes">
+						<list>
+							<value>text/json; charset=UTF-8</value>
+							<value>application/json; charset=UTF-8</value>
+						</list>
+					</property>
+				</bean>
+				<bean
+					class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+					<property name="supportedMediaTypes">
+						<list>
+							<value>text/json; charset=UTF-8</value>
+							<value>application/json; charset=UTF-8</value>
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="springGDSUtils" class="gds.framework.utils.SpringGDSUtils" />
+</beans>
